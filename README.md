@@ -5,7 +5,10 @@ Firmware that computes PWM levels in the RP2350 and outputs PWM signals from the
 It needs a local [oss-cad-suite](https://github.com/YosysHQ/oss-cad-suite-build) toolchain installed,
 or at least `yosys`, `nextpnr-ice40`, `icepack` and `python` in the execution path.
 
-## pico-ice-sdk
+---
+
+## The pico-ice-sdk and pico-sdk repositories are used as submodules in this project.
+### pico-ice-sdk
 
 [Doc](http://pico-ice.tinyvision.ai/)
 | [Hardware](https://github.com/tinyvision-ai-inc/pico-ice)
@@ -14,12 +17,12 @@ or at least `yosys`, `nextpnr-ice40`, `icepack` and `python` in the execution pa
 | [Assembly](https://htmlpreview.github.io/?https://github.com/tinyvision-ai-inc/pico-ice/blob/main/Board/Rev3/bom/ibom.html)
 | [Discord](https://discord.gg/t2CzbAYeD2)
 
-## pico-sdk
+### pico-sdk
 | [SDK](https://github.com/raspberrypi/pico-sdk)
 
 ---
 
-### To quickly get started:
+## To quickly get started:
 Provided you have the compilers setup.
 For riscv, you may add `-DPICO_GCC_TRIPLE=riscv64-unknown-elf` to the cmake command if your 'riscv64' compiler supports rp2350/rv32.
 
