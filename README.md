@@ -1,11 +1,11 @@
-pico2-ice-PWM
+# pico2-ice-PWM
 
 Firmware that computes PWM levels in the RP2350 and outputs PWM signals from the ice40 FPGA.
 
 It needs a local [oss-cad-suite](https://github.com/YosysHQ/oss-cad-suite-build) toolchain installed,
 or at least `yosys`, `nextpnr-ice40`, `icepack` and `python` in the execution path.
 
-# pico-ice-sdk
+## pico-ice-sdk
 
 [Doc](http://pico-ice.tinyvision.ai/)
 | [Hardware](https://github.com/tinyvision-ai-inc/pico-ice)
@@ -14,8 +14,10 @@ or at least `yosys`, `nextpnr-ice40`, `icepack` and `python` in the execution pa
 | [Assembly](https://htmlpreview.github.io/?https://github.com/tinyvision-ai-inc/pico-ice/blob/main/Board/Rev3/bom/ibom.html)
 | [Discord](https://discord.gg/t2CzbAYeD2)
 
-# pico-sdk
+## pico-sdk
 | [SDK](https://github.com/raspberrypi/pico-sdk)
+
+---
 
 ### To quickly get started:
 Provided you have the compilers setup.
