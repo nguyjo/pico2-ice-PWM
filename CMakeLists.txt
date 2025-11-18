@@ -7,7 +7,7 @@ set(PICO_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/pico-sdk/)
 include(pico_sdk_import.cmake)
 
 # configure the pico-sdk project
-project(rp2_ice_blinky C CXX ASM)
+project(rp2_ice_PWM C CXX ASM) # project(projectName, Languages...)
 pico_sdk_init()
 
 # add the pico-ice-sdk
