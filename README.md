@@ -25,7 +25,6 @@ For riscv, you may add `-DPICO_GCC_TRIPLE=riscv64-unknown-elf` to the cmake comm
 
 - clone the repository
 - run `git submodule update --init --recursive`
-- got into the folder of the example you wish to try
 - `mkdir build && cd build`
 - `cmake -DPICO_BOARD=pico_ice ..` or `cmake -DPICO_BOARD=pico2_ice ..` or `cmake -DPICO_BOARD=pico2_ice -DPICO_PLATFORM=rp2350-riscv ..
 - `make -j8`
