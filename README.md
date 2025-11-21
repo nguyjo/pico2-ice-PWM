@@ -30,6 +30,6 @@ For riscv, you may add `-DPICO_GCC_TRIPLE=riscv64-unknown-elf` to the cmake comm
 - run `git submodule update --init --recursive`
 - `mkdir build && cd build`
 - `cmake -DPICO_BOARD=pico_ice ..` or `cmake -DPICO_BOARD=pico2_ice ..` or `cmake -DPICO_BOARD=pico2_ice -DPICO_PLATFORM=rp2350-riscv ..
-    - If you are using NMake on Windows, try `cmake -G "Ninja" -DPICO_BOARD=pico2_ice ..`
+    - If you are using Ninja on Windows, try `cmake -G "Ninja" -DPICO_BOARD=pico2_ice ..`
 - `make -j8`
 - Copy the generated uf2 to the board after setting it to flashing mode
