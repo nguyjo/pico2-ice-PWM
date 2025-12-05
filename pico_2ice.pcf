@@ -12,8 +12,7 @@
 # https://digilent.com/reference/pmod/start
 
 # Signals used by the default firmware
-# set_io -nowarn CLK              35
-set_io -nowarn clock            35
+set_io -nowarn CLK              35
 
 # Signals used by the examples
 # I2C (conflicting with UART)
