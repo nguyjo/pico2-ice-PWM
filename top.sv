@@ -30,20 +30,9 @@ module top (
     logic [7:0] data_out;
     logic       rx_valid;
 
-    // Optional: simple power-on reset to known state
-    logic [7:0] por_cnt = '0;
-    logic       rst_n;
-    always_ff @(posedge sck or posedge cs_n) begin
-        if (cs_n) begin
-            por_cnt <= '0;
-        end else if (por_cnt != 8'hFF) begin
-            por_cnt <= por_cnt + 1;
-        end
-    end
-    assign rst_n = (por_cnt == 8'hFF);
-
+    // Tie reset permanently deasserted
     spi_slave u_spi (
-        .rst_n(rst_n),      // or 1'b1 if you prefer no POR
+        .rst_n(1'b1),
         .sck(sck),
         .mosi(mosi),
         .cs_n(cs_n),
@@ -52,7 +41,7 @@ module top (
         .rx_valid(rx_valid)
     );
 
-    // LED on if any bit in received byte is 1
-    assign LED_G = |data_out;
+    // Drive LED from LSB of received byte
+    assign LED_G = data_out[0];
 
 endmodule
