@@ -11,6 +11,7 @@ module spi_slave (
     logic [7:0] shift_reg;
     logic [2:0] bit_cnt;
 
+    // Assumes SPI mode 0: sample MOSI on rising edge of sck
     always_ff @(posedge sck or negedge rst_n) begin
         if (!rst_n) begin
             shift_reg <= 8'd0;
