@@ -1,24 +1,47 @@
-/* Blink the RGB LED */
+//////////////////////////////////////////////////////////////////////////////////
+// Engineer: Joseph Nguyen and Andrei Vasilev
+//
+// Create Date: 11/18/2026
+// Design Name: Digital Controller for VTOL UAV
+// Module Name: pwm
+// Project Name:
+// Target Devices: Mojov V3 Spartan 6 xclx9
+// Tool versions:
+// Description: Sends a PWM pulse up to the compare value on a 400 hz refresh
+//
+// Dependencies:
+//
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// Based off code examples from
+// embbededmicro.com/tutorials/mojo/pulse-width-modulation
+//
+//////////////////////////////////////////////////////////////////////////////////
 
 module top (
-    input  logic clock,
-    output logic LED_R,
-    output logic LED_G,
-    output logic LED_B
+    // input  logic rst,
+    input  logic sck,
+    input  logic mosi,
+    input  logic cs_n,
+    output logic miso,
+    output logic LED_G
 );
 
-    // Counter register with initialization
-    logic [31:0] counter = '0;
+    logic [7:0] data_out;
+    logic       rx_valid;
 
-    // Sequential logic: increment counter on each clock edge
-    always_ff @(posedge clock) begin
-        counter <= counter + 1;
-    end
+    spi_slave u_spi (
+        .rst_n(1'b1),   // permanently deeassert reset
+        .sck(sck),
+        .mosi(mosi),
+        .cs_n(cs_n),
+        .miso(miso),
+        .data_out(data_out),
+        .rx_valid(rx_valid)
+    );
 
-    // Drive outputs from counter bits
-    // You can assign individually or as a group
-    assign LED_R = counter[28];
-    assign LED_G = counter[27];
-    assign LED_B = counter[26];
+    // Drive LED: ON if received byte is nonzero
+    assign LED_G = |data_out;
 
 endmodule

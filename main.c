@@ -1,48 +1,26 @@
-/*
- * MIT License
- *
- * Copyright (c) 2023 tinyVision.ai
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 #include "pico/stdlib.h"
-#include "pico/stdio.h"
-#include "boards.h"
-#include "ice_cram.h"
-#include "ice_fpga.h"
-#include "ice_led.h"
+#include "hardware/spi.h"
 
-uint8_t bitstream[] = {
-#include "bitstream.h"
-};
+int main() {
+    stdio_init_all();
 
-int main(void) {
-    ice_led_init();
-	ice_fpga_init(FPGA_DATA, 48);
-    ice_fpga_start(FPGA_DATA);
+    // Init SPI0 at 1 MHz
+    spi_init(spi0, 1000 * 1000);
 
-    // Write the whole bitstream to the FPGA CRAM
-    ice_cram_open(FPGA_DATA);
-    ice_cram_write(bitstream, sizeof(bitstream));
-    ice_cram_close();
+    // Configure GPIO pins for SPI0
+    gpio_set_function(16, GPIO_FUNC_SPI); // MISO
+    gpio_set_function(19, GPIO_FUNC_SPI); // MOSI
+    gpio_set_function(18, GPIO_FUNC_SPI); // SCK
+    gpio_set_function(17, GPIO_FUNC_SPI); // CS
 
-    while (1);
-    return 0;
+    uint8_t txbuf[1] = {0xFF}; // send one byte
+    uint8_t rxbuf[1];
+
+    while (true) {
+        spi_write_read_blocking(spi0, txbuf, rxbuf, 1);
+        sleep_ms(500);
+
+        // Toggle between 0xFF and 0x00
+        txbuf[0] = (txbuf[0] == 0x00) ? 0xFF : 0x00;
+    }
 }

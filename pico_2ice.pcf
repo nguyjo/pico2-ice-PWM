@@ -290,8 +290,8 @@ set_io -nowarn ICE_RP_PMOD_BOT_LRCLK 23
 #set_io -nowarn ICE_RP_PMOD_BOT_MISO  26
 #set_io -nowarn ICE_RP_PMOD_BOT_MOSI  18
 #set_io -nowarn ICE_RP_PMOD_BOT_CS    23
-# SPI
-set_io -nowarn sck 20
+# SPI1 on the RP2350
+set_io -nowarn sck 21
 set_io -nowarn miso 26
 set_io -nowarn mosi 18
 set_io -nowarn cs_n 23
