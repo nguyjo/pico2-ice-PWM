@@ -22,7 +22,7 @@ module spi_slave (
             shift_reg <= {shift_reg[6:0], mosi};
             bit_cnt   <= bit_cnt + 1;
 
-            if (bit_cnt == 3'd7) begin
+            if (bit_cnt == 3'd7) begin // 8 bits received
                 data_out <= {shift_reg[6:0], mosi};
                 rx_valid <= 1'b1;
                 bit_cnt  <= 3'd0;

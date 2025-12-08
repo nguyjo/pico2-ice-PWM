@@ -2,10 +2,10 @@
 // Engineer: Joseph Nguyen and Andrei Vasilev
 //
 // Create Date: 11/18/2026
-// Design Name: Digital Controller for VTOL UAV
-// Module Name: pwm
-// Project Name:
-// Target Devices: Mojov V3 Spartan 6 xclx9
+// Design Name: 
+// Module Name: top
+// Project Name: SPI Interface and PWM Signal Generator
+// Target Devices: pico2-ice
 // Tool versions:
 // Description: Sends a PWM pulse up to the compare value on a 400 hz refresh
 //

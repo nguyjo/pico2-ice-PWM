@@ -27,7 +27,7 @@ int main(void) {
     gpio_set_function(26, GPIO_FUNC_SPI); // SCK
     gpio_set_function(25, GPIO_FUNC_SPI); // CS
 
-    spi_set_format(spi1, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    spi_set_format(spi1, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST); // automatically handles Chip Select
 
     uint8_t txbuf[1] = {0x01};
     uint8_t rxbuf[1];
