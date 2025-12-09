@@ -1,4 +1,5 @@
 module spi_slave (
+    input  logic CLK,     // system clock
     input  logic rst_n,   // active-low reset
     input  logic sck,     // SPI clock from master
     input  logic cs_n,    // chip select (active low)

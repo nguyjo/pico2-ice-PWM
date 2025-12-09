@@ -13,7 +13,7 @@ int main(void) {
     ice_led_init();
 
     // Configure and start FPGA (program CRAM with your bitstream)
-    ice_fpga_init(FPGA_DATA, 48);
+    ice_fpga_init(FPGA_DATA, 48); // 48 MHz for FPGA clock
     ice_fpga_start(FPGA_DATA);
 
     ice_cram_open(FPGA_DATA);

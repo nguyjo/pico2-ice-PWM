@@ -20,6 +20,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module top (
+    input  logic CLK,
     input  logic sck,
     input  logic mosi,
     input  logic cs_n,
@@ -32,6 +33,7 @@ module top (
 
     // Tie reset permanently deasserted
     spi_slave u_spi (
+        .CLK(CLK),
         .rst_n(1'b1),
         .sck(sck),
         .mosi(mosi),
