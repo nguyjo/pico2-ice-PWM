@@ -1,42 +1,30 @@
 module spi_slave (
-    input  logic CLK,     // system clock
-    input  logic rst_n,   // active-low reset
-    input  logic sck,     // SPI clock from master
-    input  logic cs_n,    // chip select (active low)
-    input  logic mosi,    // master out, slave in
-    output logic miso,    // master in, slave out
-    output logic [7:0] data_out,
-    output logic        rx_valid
+    input  logic CLK,
+    input  logic sck,
+    input  logic cs_n,
+    input  logic mosi,
+    output logic miso,
+    output logic [15:0] data_out,
+    output logic rx_valid
 );
+    logic [15:0] shift_reg;
+    logic [4:0]  bit_cnt;
 
-    logic [7:0] shift_reg;
-    logic [2:0] bit_cnt;
-
-    // SPI mode 0: sample MOSI on rising edge of SCK
-    always_ff @(posedge sck or negedge rst_n) begin
-        if (!rst_n) begin
-            shift_reg <= 8'd0;
-            bit_cnt   <= 3'd0;
-            data_out  <= 8'd0;
+    always_ff @(posedge sck or posedge cs_n) begin
+        if (cs_n) begin
+            bit_cnt   <= 5'd0;
             rx_valid  <= 1'b0;
-        end else if (!cs_n) begin
-            shift_reg <= {shift_reg[6:0], mosi};
+        end else begin
+            shift_reg <= {shift_reg[14:0], mosi};
             bit_cnt   <= bit_cnt + 1;
-
-            if (bit_cnt == 3'd7) begin // 8 bits received
-                data_out <= {shift_reg[6:0], mosi};
+            if (bit_cnt == 5'd15) begin
+                data_out <= {shift_reg[14:0], mosi};
                 rx_valid <= 1'b1;
-                bit_cnt  <= 3'd0;
+                bit_cnt  <= 5'd0;
             end else begin
                 rx_valid <= 1'b0;
             end
-        end else begin
-            bit_cnt  <= 3'd0;
-            rx_valid <= 1'b0;
         end
     end
-
-    // Loop back MSB to master
-    assign miso = shift_reg[7];
-
+    assign miso = shift_reg[15];
 endmodule
