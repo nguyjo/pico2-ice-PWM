@@ -30,7 +30,7 @@ pico_enable_stdio_uart(${CMAKE_PROJECT_NAME} 0)
 
 set(SV
     ${CMAKE_CURRENT_LIST_DIR}/top.sv
-    ${CMAKE_CURRENT_LIST_DIR}/spi_slave.sv
+    # ${CMAKE_CURRENT_LIST_DIR}/spi_slave.sv
 )
 add_custom_target(bitstream.h
     DEPENDS ${SV}
