@@ -7,7 +7,7 @@ set(PICO_SDK_PATH ${CMAKE_CURRENT_SOURCE_DIR}/pico-sdk/)
 include(pico_sdk_import.cmake)
 
 # configure the pico-sdk project
-project(rp2_ice_PWM C CXX ASM) # project(projectName, Languages...)
+project(rp2_ice_PWM C CXX ASM)
 pico_sdk_init()
 
 # add the pico-ice-sdk
@@ -17,15 +17,25 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pico-ice-sdk)
 add_executable(${CMAKE_PROJECT_NAME}
     main.c
     )
+
+# --- CHANGED: Added hardware libraries and Math library (m) ---
 target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_ice_sdk
+    pico_stdlib      # Standard library (GPIO, Time, etc.)
+    hardware_spi     # For FPGA Communication
+    hardware_i2c     # For IMU Communication
+    m                # Math Library (Required for atan2, sqrt, sin, cos)
     )
+
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     )
+
 pico_add_extra_outputs(${CMAKE_PROJECT_NAME})
-pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)
+
+# --- CHANGED: Enabled USB so you can see printf() output ---
+pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 1)
 pico_enable_stdio_uart(${CMAKE_PROJECT_NAME} 0)
 
 set(SV
