@@ -4,7 +4,7 @@
 // Create Date: 11/18/2026
 // Design Name: 
 // Module Name: top
-// Project Name: SPI Interface and PWM Signal Generator
+// Project Name: PWM Signal Generator
 // Target Devices: pico2-ice
 // Tool versions:
 // Description: Sends a PWM pulse up to the compare value on a 400 hz refresh
@@ -60,8 +60,8 @@ module top (
     logic [15:0] width_y;
 
     always_ff @(posedge CLK) begin
-        width_x <= 16'd14400 + (angle_x * 16'd240);
-        width_y <= 16'd14400 + (angle_y * 16'd240);
+        width_x <= 16'd14400 + (angle_x * 16'd240); // 0.6 ms minimum pulse width
+        width_y <= 16'd14400 + (angle_y * 16'd240); // 2.4 ms maximum pulse width
     end
 
     // 24 MHz Prescaler

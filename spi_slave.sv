@@ -15,7 +15,8 @@ module spi_slave (
             bit_cnt   <= 5'd0;
             rx_valid  <= 1'b0;
         end else begin
-            shift_reg <= {shift_reg[14:0], mosi};
+            // Implements SPI Shift Register (Buffer)
+            shift_reg <= {shift_reg[14:0], mosi}; // Concatenate new MOSI bit into LSB in shift register Buffer
             bit_cnt   <= bit_cnt + 1;
             if (bit_cnt == 5'd15) begin
                 data_out <= {shift_reg[14:0], mosi};
