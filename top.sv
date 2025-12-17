@@ -25,36 +25,39 @@ module top (
     output logic miso,
     output logic ICE_46, // SERVO X
     output logic ICE_48, // SERVO Y
-    output logic ICE_47 // LASER
+    output logic ICE_47  // LASER
 );
 
-    // --- 1. LASER ALWAYS ON ---
-    // No SPI control needed. Just turn it on.
-    assign ICE_47 = 1'b1;
+    assign ICE_47 = 1'b1; // Laser Always On
 
-    // --- 2. SPI INTERFACE (16 Bits) ---
+    // SPI Interface
     logic [15:0] spi_data;
-    logic rx_valid;
-    
-    // Registers for Angles (0-180)
+    // We ignore rx_valid from slave, we use CS_N logic instead
+    logic unused_valid;
+
+    spi_slave u_spi (
+        .CLK(CLK), .sck(sck), .mosi(mosi), .cs_n(cs_n), .miso(miso),
+        .data_out(spi_data), .rx_valid(unused_valid)
+    );
+
+    // --- ROBUST SPI LATCHING ---
+    // We sample CS_N using the fast system clock (48MHz).
+    // When CS_N goes from Low (0) to High (1), we grab the data.
+    logic [1:0] cs_sync;
     logic [7:0] angle_x;
     logic [7:0] angle_y;
 
-    // Use a standard 16-bit SPI Slave
-    spi_slave u_spi (
-        .CLK(CLK), .sck(sck), .mosi(mosi), .cs_n(cs_n), .miso(miso),
-        .data_out(spi_data), .rx_valid(rx_valid)
-    );
-
     always_ff @(posedge CLK) begin
-        if (rx_valid) begin
-            angle_x <= spi_data[15:8]; // First Byte
-            angle_y <= spi_data[7:0];  // Second Byte
+        cs_sync <= {cs_sync[0], cs_n}; // Shift in CS state
+        
+        // If CS transitions from 0 to 1 (01 binary)
+        if (cs_sync == 2'b01) begin
+            angle_x <= spi_data[15:8];
+            angle_y <= spi_data[7:0];
         end
     end
 
-    // --- 3. THE CALCULATOR (Degrees -> Ticks) ---
-    // Formula: Ticks = 14400 + (Angle * 240)
+    // --- MATH & PWM ---
     logic [15:0] width_x;
     logic [15:0] width_y;
 
@@ -63,7 +66,7 @@ module top (
         width_y <= 16'd14400 + (angle_y * 16'd240);
     end
 
-    // --- 4. PRESCALER (48MHz -> 24MHz) ---
+    // 24 MHz Prescaler
     logic tick_24mhz;
     logic clk_div;
     always_ff @(posedge CLK) begin
@@ -71,7 +74,7 @@ module top (
         tick_24mhz <= (clk_div == 0);
     end
 
-    // --- 5. PWM GENERATOR ---
+    // PWM Counter
     logic [18:0] pwm_cnt;
     always_ff @(posedge CLK) begin
         if (tick_24mhz) begin
