@@ -19,6 +19,10 @@ add_executable(${CMAKE_PROJECT_NAME}
     )
 target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_ice_sdk
+    pico_stdlib
+    hardware_spi    # Required for SPI communication
+    hardware_i2c    # Required for I2C communicatio
+    m
     )
 target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}

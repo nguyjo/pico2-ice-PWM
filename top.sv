@@ -20,63 +20,67 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module top (
-    input  logic CLK,      // 48 MHz Clock
-    input  logic sck,
-    input  logic mosi,
-    input  logic cs_n,
+    input  logic CLK,    // 48 MHz
+    input  logic sck, mosi, cs_n,
     output logic miso,
-    output logic ICE_48,
-    output logic ICE_46
+    output logic ICE_46, // SERVO X
+    output logic ICE_48, // SERVO Y
+    output logic ICE_47 // LASER
 );
 
-    // --- SPI INTERFACE ---
-    logic [31:0] spi_data;
+    // --- 1. LASER ALWAYS ON ---
+    // No SPI control needed. Just turn it on.
+    assign ICE_47 = 1'b1;
+
+    // --- 2. SPI INTERFACE (16 Bits) ---
+    logic [15:0] spi_data;
     logic rx_valid;
     
-    // Registers to hold pulse widths
-    logic [15:0] width_1; // Servo 1 (High 16 bits)
-    logic [15:0] width_2; // Servo 2 (Low 16 bits)
+    // Registers for Angles (0-180)
+    logic [7:0] angle_x;
+    logic [7:0] angle_y;
 
+    // Use a standard 16-bit SPI Slave
     spi_slave u_spi (
-        .CLK(CLK),
-        .sck(sck), .mosi(mosi), .cs_n(cs_n), .miso(miso),
-        .data_out(spi_data),
-        .rx_valid(rx_valid)
+        .CLK(CLK), .sck(sck), .mosi(mosi), .cs_n(cs_n), .miso(miso),
+        .data_out(spi_data), .rx_valid(rx_valid)
     );
 
-    // Latch data when valid packet arrives
     always_ff @(posedge CLK) begin
         if (rx_valid) begin
-            width_1 <= spi_data[31:16];
-            width_2 <= spi_data[15:0];
+            angle_x <= spi_data[15:8]; // First Byte
+            angle_y <= spi_data[7:0];  // Second Byte
         end
     end
 
-    // --- 24 MHz PRESCALER ---
-    // The FPGA runs at 48MHz. We toggle a bit to create a "tick" every 2 cycles.
-    // This makes our math effective 24MHz.
-    logic tick_24mhz;
-    logic [1:0] div_cnt;
+    // --- 3. THE CALCULATOR (Degrees -> Ticks) ---
+    // Formula: Ticks = 14400 + (Angle * 240)
+    logic [15:0] width_x;
+    logic [15:0] width_y;
+
     always_ff @(posedge CLK) begin
-        div_cnt <= div_cnt + 1;
-        tick_24mhz <= (div_cnt[0] == 1'b1);
+        width_x <= 16'd14400 + (angle_x * 16'd240);
+        width_y <= 16'd14400 + (angle_y * 16'd240);
     end
 
-    // --- PWM GENERATOR ---
-    // 20ms period @ 24MHz = 480,000 ticks
-    logic [18:0] pwm_cnt; 
+    // --- 4. PRESCALER (48MHz -> 24MHz) ---
+    logic tick_24mhz;
+    logic clk_div;
+    always_ff @(posedge CLK) begin
+        clk_div <= ~clk_div;
+        tick_24mhz <= (clk_div == 0);
+    end
 
+    // --- 5. PWM GENERATOR ---
+    logic [18:0] pwm_cnt;
     always_ff @(posedge CLK) begin
         if (tick_24mhz) begin
-            if (pwm_cnt >= 479999) 
-                pwm_cnt <= 0;
-            else 
-                pwm_cnt <= pwm_cnt + 1;
+            if (pwm_cnt >= 479999) pwm_cnt <= 0;
+            else pwm_cnt <= pwm_cnt + 1;
         end
     end
 
-    // Output Logic
-    assign ICE_48 = (pwm_cnt < width_1) ? 1'b1 : 1'b0;
-    assign ICE_46 = (pwm_cnt < width_2) ? 1'b1 : 1'b0;
+    assign ICE_46 = (pwm_cnt < width_x);
+    assign ICE_48 = (pwm_cnt < width_y);
 
 endmodule
