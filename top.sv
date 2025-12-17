@@ -28,8 +28,6 @@ module top (
     output logic ICE_47  // LASER
 );
 
-    assign ICE_47 = 1'b1; // Laser Always On
-
     // SPI Interface
     logic [15:0] spi_data;
     // We ignore rx_valid from slave, we use CS_N logic instead
@@ -85,5 +83,6 @@ module top (
 
     assign ICE_46 = (pwm_cnt < width_x);
     assign ICE_48 = (pwm_cnt < width_y);
+    assign ICE_47 = 1'b1; // Laser Always On
 
 endmodule
