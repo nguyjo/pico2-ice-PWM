@@ -54,7 +54,7 @@ uint8_t map_tilt_to_servo(float tilt) {
     float max_in = 45.0f;
     if (tilt < min_in) tilt = min_in;
     if (tilt > max_in) tilt = max_in;
-    return (uint8_t)((tilt - min_in) * 180.0f / (max_in - min_in));
+    return (uint8_t)((tilt - min_in) * 180.0f / (max_in - min_in)); // this number between 0-180 is sent over SPI to ice40
 }
 
 int main() {
@@ -93,6 +93,7 @@ int main() {
     i2c_write_u8(CTRL1_XL, 0x4A); // Accel
     sleep_ms(50);
 
+    // Initial angle values
     float roll = 0.0f;
     float pitch = 0.0f;
 
@@ -108,7 +109,7 @@ int main() {
         float accel_roll  = atan2f((float)ayr, (float)azr) * 180.0f / (float)M_PI;
         float accel_pitch = atan2f(-(float)axr, sqrtf((float)ayr*(float)ayr + (float)azr*(float)azr)) * 180.0f / (float)M_PI;
 
-        // Filter
+        // Complementary Filter
         roll  = 0.9f * roll  + 0.1f * accel_roll;
         pitch = 0.9f * pitch + 0.1f * accel_pitch;
 
