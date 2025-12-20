@@ -15,7 +15,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pico-ice-sdk)
 
 # add the local files
 add_executable(${CMAKE_PROJECT_NAME}
-    main.c
+    GyroscopeBringUp.c
     )
 
 # --- CHANGED: Added hardware libraries and Math library (m) ---
