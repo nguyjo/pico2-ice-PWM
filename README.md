@@ -1,4 +1,4 @@
-# pico2-ice-PWM
+# pico2-ice-Joystick
 
 Firmware that computes PWM levels in the RP2350 and outputs PWM signals from the ice40 FPGA.
 
