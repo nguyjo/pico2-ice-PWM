@@ -15,7 +15,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/pico-ice-sdk)
 
 # add the local files
 add_executable(${CMAKE_PROJECT_NAME}
-    main.c
+    ServoMotorBringUp.c
     )
 target_link_libraries(${CMAKE_PROJECT_NAME}
     pico_ice_sdk
@@ -29,13 +29,13 @@ pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 0)
 pico_enable_stdio_uart(${CMAKE_PROJECT_NAME} 0)
 
 set(SV
-    ${CMAKE_CURRENT_LIST_DIR}/top.sv
+    ${CMAKE_CURRENT_LIST_DIR}/ServoMotorBringUp.sv
     ${CMAKE_CURRENT_LIST_DIR}/spi_slave.sv
 )
 add_custom_target(bitstream.h
     DEPENDS ${SV}
-    COMMAND yosys -p 'synth_ice40 -abc9 -top top -json bitstream.json' ${SV}
-    COMMAND nextpnr-ice40  --package sg48 --up5k --freq 48 --top top --pcf ${CMAKE_SOURCE_DIR}/pico_2ice.pcf --json bitstream.json --asc bitstream.asc
+    COMMAND yosys -p 'synth_ice40 -abc9 -top ServoMotorBringUp -json bitstream.json' ${SV}
+    COMMAND nextpnr-ice40  --package sg48 --up5k --freq 48 --top ServoMotorBringUp --pcf ${CMAKE_SOURCE_DIR}/pico_2ice.pcf --json bitstream.json --asc bitstream.asc
     COMMAND icepack bitstream.asc bitstream.bin
     COMMAND python ${CMAKE_CURRENT_LIST_DIR}/bin2header.py bitstream.bin >bitstream.h
     )
